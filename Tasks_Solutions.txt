@@ -1,0 +1,148 @@
+1. Create a database and tables:
+
+create database db1;
+
+Table CUSTOMER
+CREATE table db1.CUSTOMER (
+CST_ID INT NOT NULL auto_increment primary key,
+CST_NAME varchar(45),
+GENDER VARCHAR(1),
+CST_TYPE_ID int NOT NULL,
+FOREIGN KEY (CST_TYPE_ID) references CUSTOMER_TYPE (CST_TYPE_ID),
+BIRTH_DATE DATE
+);
+
+INSERT INTO db1.CUSTOMER (CST_ID, CST_NAME, GENDER, CST_TYPE_ID, BIRTH_DATE) VALUES
+(1, "O'Reilly, Tim", "M", 1, '1982-12-15'),
+(2, "O'REILLY, Sean", "M", 1, '1960-01-01'),
+(3, "Sotheby, John", "M", 1, null),
+(4, "Owreilly, Catherine", "F", 1, '2002-10-16'),
+(5, "Lee, Bruce", "M", 1, '1982-12-15'),
+(6, "Willis, Bruce", "M", 4, '1982-12-15'),
+(7, "Sotheby's Wine", "N", 2, null),
+(8, "McLaren Automotive", "N", 2, null);
+
+select * from db1.customer;
+
+Table ACCOUNTS
+CREATE TABLE DB1.ACCOUNTS (
+ACC_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ACC_NUM VARCHAR(15),
+ACC_BAL_NUM INT NOT NULL,
+REGION_ID INT NOT NULL,
+FOREIGN KEY (REGION_ID) references REGION (REGION_ID),
+CST_ID INT,
+FOREIGN KEY (CST_ID) references CUSTOMER (CST_ID),
+CURRENCY_ID INT NOT NULL,
+FOREIGN KEY (CURRENCY_ID) references CURRENCY (CURRENCY_ID)
+);
+
+INSERT INTO db1.ACCOUNTS (ACC_ID, ACC_NUM, ACC_BAL_NUM, REGION_ID, CST_ID, CURRENCY_ID) VALUES
+(1, '262015161', 2620, 1, 4, 978),
+(2, '260078965', 2600, 1, 7, 980),
+(3, '1001965452', 1001, 2, NULL, 980),
+(4, '38005858965', 3800, 3, NULL, 840),
+(5, '62042008455', 6204, 3, NULL, 980),
+(6, '2620052654', 2620, 4, 6, 959),
+(7, '2630987654', 2630, 4, 1, 978),
+(8, '1001236585', 1001, 5, NULL, 980),
+(9, '10018564662', 1001, 5, NULL, 961),
+(10, '2630456321', 2630, 2, 2, 840);
+
+select * from db1.ACCOUNTS
+
+Table CUSTOMER_TYPE
+CREATE TABLE DB1.CUSTOMER_TYPE (
+CST_TYPE_ID INT NOT NULL auto_increment primary key,
+CST_TYPE_NAME varchar(45)
+);
+
+INSERT INTO DB1.CUSTOMER_TYPE (CST_TYPE_ID, CST_TYPE_NAME) VALUES
+(1, 'Фізичні особи'),
+(2, 'Юридичні особи'),
+(3, 'Банки'),
+(4, 'ФОП');
+
+SELECT * FROM DB1.CUSTOMER_TYPE
+
+Table CURRENCY
+CREATE TABLE DB1.CURRENCY (
+CURRENCY_ID INT NOT NULL PRIMARY KEY,
+CURRENCY_CODE varchar(3)
+);
+
+INSERT INTO DB1.CURRENCY (CURRENCY_ID, CURRENCY_CODE) VALUES
+(980, 'UAH'),
+(840, 'USD'),
+(978, 'EUR'),
+(961, 'XAG'),
+(959, 'XAU');
+
+SELECT * FROM DB1.CURRENCY
+
+Table REGION
+CREATE TABLE DB1.REGION (
+REGION_ID INT NOT NULL PRIMARY KEY,
+REGION_NAME varchar(45)
+);
+
+INSERT INTO DB1.REGION (REGION_ID, REGION_NAME) VALUES
+(1, 'Вінницька філія'),
+(2, 'Волинська філія'),
+(3, 'Київська філія'),
+(4, 'Донецька філія'),
+(5, 'Рівненська філія');
+
+SELECT * FROM DB1.REGION
+
+Table AMOUNT
+CREATE TABLE DB1.AMOUNT (
+ACC_ID INT NOT NULL,
+FOREIGN KEY (ACC_ID) references ACCOUNTS (ACC_ID),
+DT DATE,
+AMOUNT_NML DECIMAL(10,2)
+);
+
+INSERT INTO db1.AMOUNT (ACC_ID, DT, AMOUNT_NML) VALUES
+(1, '2021-01-11', 100.00),
+(2, '2021-01-11', 18000.00),
+(3, '2021-01-11', 55000.00),
+(4, '2021-01-11', 350.00),
+(5, '2021-01-11', 1045.15),
+(6, '2021-01-11', 5.00),
+(7, '2021-01-11', 500.00),
+(8, '2021-01-11', 100000.00),
+(9, '2021-01-11', 20.00),
+(10, '2021-01-11', 560.00),
+(1, '2021-01-12', 100.00),
+(2, '2021-01-12', 0.00),
+(3, '2021-01-12', 45000.00),
+(4, '2021-01-12', 55.00),
+(5, '2021-01-12', 1500.00),
+(6, '2021-01-12', 5.00),
+(7, '2021-01-12', 500.00),
+(8, '2021-01-12', 80000.00),
+(9, '2021-01-12', 20.00),
+(10, '2021-01-12', 560.00);
+
+select * from DB1.AMOUNT
+
+
+ 2. Write a query to count the number of men and women among customers. The result must contain fields:
+GENDER	CST_COUNT
+
+select GENDER, COUNT(*) AS CST_COUNT from db1.customer group by gender;
+
+
+ 3. Write a query to identify customers with missing date of birth data:
+
+select CST_NAME, BIRTH_DATE FROM DB1.CUSTOMER group by cst_name HAVING BIRTH_DATE is null;
+
+
+ 4. Write a request to identify accounts with Ukrainian hryvnia currency among customers with the last name O'Reilly. The result must contain fields:
+CST_ID	CST_NAME ACC_ID	ACC_NUM	CURRENCY_CODE  REGION_NAME
+
+SELECT CST_ID, CST_NAME, ACC_ID, ACC_NUM, CURRENCY_ID FROM DB1.CUSTOMER
+JOIN DB1.ACCOUNTS ON DB1.CUSTOMER.CST_ID=DB1.ACCOUNTS.CST_ID
+HAVING CST_NAME='%O’Reilly%';
+
